@@ -13,17 +13,32 @@ const VARIANT_STYLES: Record<
   CalloutVariant,
   { bg: string; border: string; swatch: string; label: string }
 > = {
-  info:    { bg: 'bg-[#F0FDFA]', border: 'border-[#5EEAD4]', swatch: '#0D9488', label: 'Teal'    },
-  warning: { bg: 'bg-[#FFFBEB]', border: 'border-[#FCD34D]', swatch: '#D97706', label: 'Amber'   },
-  success: { bg: 'bg-[#F0FDF4]', border: 'border-[#86EFAC]', swatch: '#16A34A', label: 'Green'   },
-  danger:  { bg: 'bg-[#FEF2F2]', border: 'border-[#FCA5A5]', swatch: '#DC2626', label: 'Red'     },
+  info: { bg: 'bg-[#F0FDFA]', border: 'border-[#5EEAD4]', swatch: '#0D9488', label: 'Teal' },
+  warning: { bg: 'bg-[#FFFBEB]', border: 'border-[#FCD34D]', swatch: '#D97706', label: 'Amber' },
+  success: { bg: 'bg-[#F0FDF4]', border: 'border-[#86EFAC]', swatch: '#16A34A', label: 'Green' },
+  danger: { bg: 'bg-[#FEF2F2]', border: 'border-[#FCA5A5]', swatch: '#DC2626', label: 'Red' },
   neutral: { bg: 'bg-[#FAFAF8]', border: 'border-[#E5E0D8]', swatch: '#78716C', label: 'Neutral' },
 }
 
 const EMOJI_OPTIONS = [
-  '💡', '✅', '⚠️', '❌', '📌', '🔥',
-  '💬', '📝', '🎯', 'ℹ️', '🚀', '💭',
-  '🌟', '🔑', '📊', '🧠', '👉', '✨',
+  '💡',
+  '✅',
+  '⚠️',
+  '❌',
+  '📌',
+  '🔥',
+  '💬',
+  '📝',
+  '🎯',
+  'ℹ️',
+  '🚀',
+  '💭',
+  '🌟',
+  '🔑',
+  '📊',
+  '🧠',
+  '👉',
+  '✨',
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -68,22 +83,31 @@ export default function CalloutBlock({
           showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
-        {(Object.entries(VARIANT_STYLES) as [CalloutVariant, (typeof VARIANT_STYLES)[CalloutVariant]][]).map(
-          ([key, val]) => (
-            <button
-              key={key}
-              onMouseDown={(e) => { e.preventDefault(); updateAttributes({ variant: key }) }}
-              title={val.label}
-              className={`w-3.5 h-3.5 rounded-full transition-transform hover:scale-125 ${
-                variant === key ? 'ring-2 ring-offset-1 ring-[#0F766E]' : ''
-              }`}
-              style={{ backgroundColor: val.swatch }}
-            />
-          ),
-        )}
+        {(
+          Object.entries(VARIANT_STYLES) as [
+            CalloutVariant,
+            (typeof VARIANT_STYLES)[CalloutVariant],
+          ][]
+        ).map(([key, val]) => (
+          <button
+            key={key}
+            onMouseDown={(e) => {
+              e.preventDefault()
+              updateAttributes({ variant: key })
+            }}
+            title={val.label}
+            className={`w-3.5 h-3.5 rounded-full transition-transform hover:scale-125 ${
+              variant === key ? 'ring-2 ring-offset-1 ring-[#0F766E]' : ''
+            }`}
+            style={{ backgroundColor: val.swatch }}
+          />
+        ))}
         <div className="w-px h-3.5 bg-[#E5E0D8]" />
         <button
-          onMouseDown={(e) => { e.preventDefault(); deleteNode() }}
+          onMouseDown={(e) => {
+            e.preventDefault()
+            deleteNode()
+          }}
           className="text-[#C4BFBA] hover:text-[#EF4444] transition-colors"
           title="Remove callout"
         >
@@ -100,7 +124,10 @@ export default function CalloutBlock({
         {/* Emoji — click to open picker */}
         <div contentEditable={false} className="relative shrink-0 mt-0.5" ref={emojiRef}>
           <button
-            onMouseDown={(e) => { e.preventDefault(); setShowEmojiPicker((v) => !v) }}
+            onMouseDown={(e) => {
+              e.preventDefault()
+              setShowEmojiPicker((v) => !v)
+            }}
             className="text-xl leading-none select-none hover:scale-110 transition-transform cursor-pointer"
             title="Change icon"
           >

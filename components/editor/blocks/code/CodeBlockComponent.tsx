@@ -21,40 +21,40 @@ const LANGUAGE_GROUPS: { group: string; languages: { id: string; label: string }
   {
     group: 'Web',
     languages: [
-      { id: 'html',       label: 'HTML'       },
-      { id: 'css',        label: 'CSS'        },
+      { id: 'html', label: 'HTML' },
+      { id: 'css', label: 'CSS' },
       { id: 'javascript', label: 'JavaScript' },
       { id: 'typescript', label: 'TypeScript' },
-      { id: 'json',       label: 'JSON'       },
+      { id: 'json', label: 'JSON' },
     ],
   },
   {
     group: 'Systems',
     languages: [
-      { id: 'rust',   label: 'Rust'   },
-      { id: 'cpp',    label: 'C++'    },
-      { id: 'c',      label: 'C'      },
-      { id: 'go',     label: 'Go'     },
+      { id: 'rust', label: 'Rust' },
+      { id: 'cpp', label: 'C++' },
+      { id: 'c', label: 'C' },
+      { id: 'go', label: 'Go' },
     ],
   },
   {
     group: 'General',
     languages: [
-      { id: 'python',  label: 'Python'  },
-      { id: 'java',    label: 'Java'    },
-      { id: 'csharp',  label: 'C#'      },
-      { id: 'ruby',    label: 'Ruby'    },
-      { id: 'php',     label: 'PHP'     },
-      { id: 'swift',   label: 'Swift'   },
-      { id: 'kotlin',  label: 'Kotlin'  },
+      { id: 'python', label: 'Python' },
+      { id: 'java', label: 'Java' },
+      { id: 'csharp', label: 'C#' },
+      { id: 'ruby', label: 'Ruby' },
+      { id: 'php', label: 'PHP' },
+      { id: 'swift', label: 'Swift' },
+      { id: 'kotlin', label: 'Kotlin' },
     ],
   },
   {
     group: 'Config & Scripts',
     languages: [
-      { id: 'bash',     label: 'Bash'     },
-      { id: 'yaml',     label: 'YAML'     },
-      { id: 'sql',      label: 'SQL'      },
+      { id: 'bash', label: 'Bash' },
+      { id: 'yaml', label: 'YAML' },
+      { id: 'sql', label: 'SQL' },
       { id: 'markdown', label: 'Markdown' },
     ],
   },
@@ -80,7 +80,6 @@ export default function CodeBlockComponent({ node, updateAttributes }: NodeViewP
   return (
     <NodeViewWrapper className="code-block-node my-4 font-sans">
       <div className="rounded-xl overflow-hidden border border-[#E5E0D8]">
-
         {/* ── Header ── */}
         <div
           contentEditable={false}
@@ -100,11 +99,15 @@ export default function CodeBlockComponent({ node, updateAttributes }: NodeViewP
               <SelectValue placeholder="Plain text" />
             </SelectTrigger>
             <SelectContent className="font-sans">
-              <SelectItem value="__plain__" className="text-xs">Plain text</SelectItem>
+              <SelectItem value="__plain__" className="text-xs">
+                Plain text
+              </SelectItem>
               <SelectSeparator />
               {LANGUAGE_GROUPS.map(({ group, languages }) => (
                 <SelectGroup key={group}>
-                  <SelectLabel className="text-[10px] tracking-wider uppercase">{group}</SelectLabel>
+                  <SelectLabel className="text-[10px] tracking-wider uppercase">
+                    {group}
+                  </SelectLabel>
                   {languages.map(({ id, label }) => (
                     <SelectItem key={id} value={id} className="text-xs">
                       {label}
@@ -130,10 +133,12 @@ export default function CodeBlockComponent({ node, updateAttributes }: NodeViewP
         </div>
 
         {/* ── Code area ── */}
-        <pre ref={preRef} className="code-block-pre overflow-x-auto m-0 rounded-none bg-[#F5F3F0] px-5 py-4">
+        <pre
+          ref={preRef}
+          className="code-block-pre overflow-x-auto m-0 rounded-none bg-[#F5F3F0] px-5 py-4"
+        >
           <NodeViewContent as="code" className="hljs text-[#1C1917] text-sm leading-relaxed" />
         </pre>
-
       </div>
     </NodeViewWrapper>
   )

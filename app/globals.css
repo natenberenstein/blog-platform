@@ -4,14 +4,14 @@
 
 /* ─── Design tokens ─── */
 :root {
-  --bg: #F9F7F4;
-  --surface: #FFFFFF;
-  --border: #E5E0D8;
-  --text: #1C1917;
-  --muted: #6B6560;
-  --placeholder: #C4BFBA;
-  --teal: #0F766E;
-  --teal-light: #CCFBF1;
+  --bg: #f9f7f4;
+  --surface: #ffffff;
+  --border: #e5e0d8;
+  --text: #1c1917;
+  --muted: #6b6560;
+  --placeholder: #c4bfba;
+  --teal: #0f766e;
+  --teal-light: #ccfbf1;
 }
 
 html,
@@ -130,7 +130,7 @@ body {
 .ProseMirror code {
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.875em;
-  background: #F0EDE8;
+  background: #f0ede8;
   padding: 0.125em 0.375em;
   border-radius: 4px;
   color: var(--teal);
@@ -138,15 +138,15 @@ body {
 
 /* Code block (StarterKit fallback — not used when NodeView is active) */
 .ProseMirror pre {
-  background: #F5F3F0;
+  background: #f5f3f0;
   border-radius: 12px;
-  color: #1C1917;
+  color: #1c1917;
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.875rem;
   margin: 1rem 0;
   overflow-x: auto;
   padding: 1rem 1.25rem;
-  border: 1px solid #E5E0D8;
+  border: 1px solid #e5e0d8;
 }
 
 .ProseMirror pre code {
@@ -158,7 +158,7 @@ body {
 
 /* Code block NodeView — neutralise the global pre styles inside the wrapper */
 .code-block-node .code-block-pre {
-  background: #F5F3F0;
+  background: #f5f3f0;
   border-radius: 0;
   margin: 0;
   padding: 1rem 1.25rem;
@@ -166,47 +166,72 @@ body {
 
 /* ─── Syntax highlighting tokens — light warm theme ─── */
 .hljs-comment,
-.hljs-quote            { color: #A09A94; font-style: italic; }  /* warm gray   — comments  */
+.hljs-quote {
+  color: #a09a94;
+  font-style: italic;
+} /* warm gray   — comments  */
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-built_in,
 .hljs-name,
-.hljs-tag              { color: #7C3AED; }                      /* violet      — keywords  */
+.hljs-tag {
+  color: #7c3aed;
+} /* violet      — keywords  */
 
 .hljs-string,
 .hljs-attr,
-.hljs-addition         { color: #15803D; }                      /* green-700   — strings   */
+.hljs-addition {
+  color: #15803d;
+} /* green-700   — strings   */
 
 .hljs-number,
-.hljs-literal          { color: #B45309; }                      /* amber-700   — numbers   */
+.hljs-literal {
+  color: #b45309;
+} /* amber-700   — numbers   */
 
 .hljs-title,
 .hljs-title.function_,
 .hljs-title.class_,
-.hljs-section          { color: #0F766E; }                      /* teal accent — functions */
+.hljs-section {
+  color: #0f766e;
+} /* teal accent — functions */
 
 .hljs-type,
 .hljs-class .hljs-title,
-.hljs-variable.language_ { color: #B45309; }                   /* amber-700   — types     */
+.hljs-variable.language_ {
+  color: #b45309;
+} /* amber-700   — types     */
 
 .hljs-variable,
-.hljs-params           { color: #B91C1C; }                      /* red-700     — variables */
+.hljs-params {
+  color: #b91c1c;
+} /* red-700     — variables */
 
 .hljs-regexp,
-.hljs-link             { color: #0891B2; }                      /* cyan-600    — regex     */
+.hljs-link {
+  color: #0891b2;
+} /* cyan-600    — regex     */
 
 .hljs-meta,
 .hljs-selector-id,
-.hljs-selector-class   { color: #1D4ED8; }                      /* blue-700    — meta      */
+.hljs-selector-class {
+  color: #1d4ed8;
+} /* blue-700    — meta      */
 
 .hljs-symbol,
 .hljs-bullet,
 .hljs-subst,
-.hljs-formula          { color: #6B6560; }                      /* muted       — misc      */
+.hljs-formula {
+  color: #6b6560;
+} /* muted       — misc      */
 
-.hljs-emphasis         { font-style: italic; }
-.hljs-strong           { font-weight: 700; }
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
 
 /* ─── Drag handle ─── */
 .tiptap-drag-handle {
@@ -216,11 +241,13 @@ body {
   justify-content: center;
   width: 20px;
   padding-top: 3px;
-  color: #C4BFBA;
+  color: #c4bfba;
   cursor: grab;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms ease, color 120ms ease;
+  transition:
+    opacity 120ms ease,
+    color 120ms ease;
   z-index: 50;
   user-select: none;
 }
@@ -231,7 +258,7 @@ body {
 }
 
 .tiptap-drag-handle:hover {
-  color: #6B6560;
+  color: #6b6560;
 }
 
 .tiptap-drag-handle:active {
@@ -247,7 +274,7 @@ body {
 
 .math-rendered .katex {
   font-size: 1.15em;
-  color: #1C1917;
+  color: #1c1917;
 }
 
 /* Horizontal rule */
@@ -291,8 +318,8 @@ body {
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 30 8% 90%;       /* warm hover ≈ #E9E3DC */
-    --accent-foreground: 20 14% 11%;  /* warm near-black */
+    --accent: 30 8% 90%; /* warm hover ≈ #E9E3DC */
+    --accent-foreground: 20 14% 11%; /* warm near-black */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;

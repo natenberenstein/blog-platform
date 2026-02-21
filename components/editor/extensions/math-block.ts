@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import MathBlock from '../MathBlock'
+import MathBlock from '../blocks/math/MathBlock'
 
 const MathBlockNode = Node.create({
   name: 'mathBlock',

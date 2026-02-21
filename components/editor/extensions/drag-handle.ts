@@ -1,8 +1,11 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey, NodeSelection } from '@tiptap/pm/state'
 import { Fragment, Slice } from '@tiptap/pm/model'
+import type { EditorView } from '@tiptap/pm/view'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+type PosAtCoords = NonNullable<ReturnType<EditorView['posAtCoords']>>
 
 /**
  * Return the position of the best draggable node under the cursor:
@@ -10,10 +13,7 @@ import { Fragment, Slice } from '@tiptap/pm/model'
  *   reordered independently of the surrounding list)
  * - otherwise the top-level (depth-1) block
  */
-function getDraggablePos(
-  view: any,
-  coords: { pos: number; inside: number },
-): number | null {
+function getDraggablePos(view: EditorView, coords: PosAtCoords): number | null {
   if (coords.pos < 0) return null
   try {
     const $pos = view.state.doc.resolve(coords.pos)
@@ -64,7 +64,10 @@ function createDragHandlePlugin() {
       let hideTimer: ReturnType<typeof setTimeout> | null = null
 
       function show() {
-        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+        if (hideTimer) {
+          clearTimeout(hideTimer)
+          hideTimer = null
+        }
         handle.classList.add('is-visible')
       }
 
@@ -79,15 +82,24 @@ function createDragHandlePlugin() {
       // ── Track which block the cursor is over ──
       function onMouseMove(e: MouseEvent) {
         const coords = editorView.posAtCoords({ left: e.clientX, top: e.clientY })
-        if (!coords) { scheduleHide(); return }
+        if (!coords) {
+          scheduleHide()
+          return
+        }
 
         const pos = getDraggablePos(editorView, coords)
-        if (pos === null) { scheduleHide(); return }
+        if (pos === null) {
+          scheduleHide()
+          return
+        }
 
         currentNodePos = pos
 
         const dom = editorView.nodeDOM(pos)
-        if (!(dom instanceof HTMLElement)) { scheduleHide(); return }
+        if (!(dom instanceof HTMLElement)) {
+          scheduleHide()
+          return
+        }
 
         const rect = dom.getBoundingClientRect()
 
@@ -102,8 +114,8 @@ function createDragHandlePlugin() {
           : rect.left
 
         // position: fixed so top/left are viewport-relative — same as getBCR()
-        handle.style.top    = `${rect.top}px`
-        handle.style.left   = `${leftAnchor - 28}px`  // 20px handle + 8px gap
+        handle.style.top = `${rect.top}px`
+        handle.style.left = `${leftAnchor - 28}px` // 20px handle + 8px gap
         handle.style.height = `${rect.height}px`
         show()
       }
@@ -122,7 +134,11 @@ function createDragHandlePlugin() {
 
         // Tell ProseMirror what is being dragged and that it's a move.
         const slice = new Slice(Fragment.from(node), 0, 0)
-        ;(editorView as any).dragging = { slice, move: true }
+        ;(
+          editorView as EditorView & {
+            dragging: { slice: Slice; move: boolean } | null
+          }
+        ).dragging = { slice, move: true }
 
         e.dataTransfer.effectAllowed = 'move'
         e.dataTransfer.setData('text/plain', ' ')

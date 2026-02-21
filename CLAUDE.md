@@ -28,10 +28,10 @@ The core is a **Tiptap v2** rich-text editor. All logic lives under `components/
 
 Every custom block follows the same two-file pattern:
 
-| File | Role |
-|---|---|
+| File                     | Role                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
 | `extensions/foo-node.ts` | Declares the ProseMirror node (name, group, content, attrs, parseHTML/renderHTML, addNodeView) |
-| `FooBlock.tsx` | The React component rendered by `ReactNodeViewRenderer` |
+| `FooBlock.tsx`           | The React component rendered by `ReactNodeViewRenderer`                                        |
 
 **Atom nodes** (`atom: true`, e.g. ChartBlock, MathBlock): the entire block is a single ProseMirror leaf. No `NodeViewContent`. All state lives in node attributes.
 

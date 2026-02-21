@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import CalloutBlock from '../CalloutBlock'
+import CalloutBlock from '../blocks/callout/CalloutBlock'
 
 const CalloutNode = Node.create({
   name: 'callout',
@@ -9,7 +9,7 @@ const CalloutNode = Node.create({
 
   addAttributes() {
     return {
-      emoji:   { default: '💡' },
+      emoji: { default: '💡' },
       variant: { default: 'info' },
     }
   },

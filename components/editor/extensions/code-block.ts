@@ -4,7 +4,7 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { common, createLowlight } from 'lowlight'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import CodeBlockComponent from '../CodeBlockComponent'
+import CodeBlockComponent from '../blocks/code/CodeBlockComponent'
 
 const lowlight = createLowlight(common)
 const pluginKey = new PluginKey('lowlight-debounced')
@@ -18,12 +18,12 @@ type HastNode = {
   properties?: { className?: string[] }
 }
 
-function parseNodes(nodes: HastNode[], inherited: string[] = []): { text: string; classes: string[] }[] {
+function parseNodes(
+  nodes: HastNode[],
+  inherited: string[] = [],
+): { text: string; classes: string[] }[] {
   return nodes.flatMap((node) => {
-    const classes = [
-      ...inherited,
-      ...(node.properties?.className ?? []),
-    ]
+    const classes = [...inherited, ...(node.properties?.className ?? [])]
     if (node.children) return parseNodes(node.children, classes)
     return [{ text: node.value ?? '', classes }]
   })
@@ -45,12 +45,16 @@ function buildDecorations(
     let pos = block.pos + 1
     try {
       const result = lowlight.highlight(language, block.node.textContent)
-      parseNodes((result as unknown as { children: HastNode[] }).children).forEach(({ text, classes }) => {
-        if (classes.length) {
-          decorations.push(Decoration.inline(pos, pos + text.length, { class: classes.join(' ') }))
-        }
-        pos += text.length
-      })
+      parseNodes((result as unknown as { children: HastNode[] }).children).forEach(
+        ({ text, classes }) => {
+          if (classes.length) {
+            decorations.push(
+              Decoration.inline(pos, pos + text.length, { class: classes.join(' ') }),
+            )
+          }
+          pos += text.length
+        },
+      )
     } catch {
       // unknown language — leave plain
     }
@@ -91,14 +95,14 @@ function createDebouncedPlugin(
       },
     },
 
-    view(view) {
+    view(_view) {
       return {
-        update(view, prevState) {
-          if (view.state.doc.eq(prevState.doc)) return
+        update(nextView, prevState) {
+          if (nextView.state.doc.eq(prevState.doc)) return
           if (timer) clearTimeout(timer)
           timer = setTimeout(() => {
-            const decorations = buildDecorations(view.state.doc, name, defaultLanguage)
-            view.dispatch(view.state.tr.setMeta(pluginKey, decorations))
+            const decorations = buildDecorations(nextView.state.doc, name, defaultLanguage)
+            nextView.dispatch(nextView.state.tr.setMeta(pluginKey, decorations))
           }, debounceMs)
         },
         destroy() {
@@ -117,37 +121,33 @@ function createDebouncedPlugin(
 
 // ─── Extension ────────────────────────────────────────────────────────────────
 
-const CodeBlock = CodeBlockLowlight
-  .extend({
-    addKeyboardShortcuts() {
-      return {
-        Tab: () => {
-          if (!this.editor.isActive('codeBlock')) return false
-          this.editor.commands.insertContent('    ')
-          return true
-        },
-      }
-    },
+const CodeBlock = CodeBlockLowlight.extend({
+  addKeyboardShortcuts() {
+    return {
+      Tab: () => {
+        if (!this.editor.isActive('codeBlock')) return false
+        this.editor.commands.insertContent('    ')
+        return true
+      },
+    }
+  },
 
-    addNodeView() {
-      return ReactNodeViewRenderer(CodeBlockComponent, {
-        // Only re-render the React component when the language attribute changes.
-        // Content changes (typing) are written directly to the contentDOM by
-        // ProseMirror; decoration updates (from our debounced plugin) also don't
-        // need to re-render the header UI. This eliminates the per-keystroke lag.
-        update: ({ oldNode, newNode, updateProps }) => {
-          if (oldNode.attrs.language !== newNode.attrs.language) updateProps()
-          return true
-        },
-      })
-    },
-    // Override the synchronous lowlight plugin with our debounced version.
-    addProseMirrorPlugins() {
-      return [
-        createDebouncedPlugin(this.name, this.options.defaultLanguage, 300),
-      ]
-    },
-  })
-  .configure({ lowlight })
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlockComponent, {
+      // Only re-render the React component when the language attribute changes.
+      // Content changes (typing) are written directly to the contentDOM by
+      // ProseMirror; decoration updates (from our debounced plugin) also don't
+      // need to re-render the header UI. This eliminates the per-keystroke lag.
+      update: ({ oldNode, newNode, updateProps }) => {
+        if (oldNode.attrs.language !== newNode.attrs.language) updateProps()
+        return true
+      },
+    })
+  },
+  // Override the synchronous lowlight plugin with our debounced version.
+  addProseMirrorPlugins() {
+    return [createDebouncedPlugin(this.name, this.options.defaultLanguage, 300)]
+  },
+}).configure({ lowlight })
 
 export default CodeBlock

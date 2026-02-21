@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer } from '@tiptap/react'
-import ToggleBlock from '../ToggleBlock'
+import ToggleBlock from '../blocks/toggle/ToggleBlock'
 
 const ToggleNode = Node.create({
   name: 'toggleBlock',
@@ -13,8 +13,8 @@ const ToggleNode = Node.create({
       title: { default: '' },
       open: {
         default: true,
-        parseHTML: el => el.getAttribute('data-open') !== 'false',
-        renderHTML: attrs => ({ 'data-open': String(attrs.open) }),
+        parseHTML: (el) => el.getAttribute('data-open') !== 'false',
+        renderHTML: (attrs) => ({ 'data-open': String(attrs.open) }),
       },
     }
   },

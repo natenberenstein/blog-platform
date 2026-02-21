@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent, BubbleMenu, type Editor as TiptapEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,7 +12,9 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  type LucideIcon,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import SlashCommand from './extensions/slash-command'
 import ChartNode from './extensions/chart-node'
 import CalloutNode from './extensions/callout-node'
@@ -21,46 +23,82 @@ import MathBlockNode from './extensions/math-block'
 import ToggleNode from './extensions/toggle-node'
 import DragHandle from './extensions/drag-handle'
 
+interface ToolbarAction {
+  title: string
+  icon: LucideIcon
+  run: (editor: TiptapEditor) => void
+  isActive: (editor: TiptapEditor) => boolean
+}
+
 interface ToolbarButtonProps {
   onClick: () => void
   isActive?: boolean
   title: string
-  children: React.ReactNode
+  icon: LucideIcon
 }
 
-function ToolbarButton({ onClick, isActive, title, children }: ToolbarButtonProps) {
+const INLINE_ACTIONS: ToolbarAction[] = [
+  {
+    title: 'Bold (⌘B)',
+    icon: Bold,
+    run: (editor) => editor.chain().focus().toggleBold().run(),
+    isActive: (editor) => editor.isActive('bold'),
+  },
+  {
+    title: 'Italic (⌘I)',
+    icon: Italic,
+    run: (editor) => editor.chain().focus().toggleItalic().run(),
+    isActive: (editor) => editor.isActive('italic'),
+  },
+  {
+    title: 'Strikethrough',
+    icon: Strikethrough,
+    run: (editor) => editor.chain().focus().toggleStrike().run(),
+    isActive: (editor) => editor.isActive('strike'),
+  },
+  {
+    title: 'Inline Code',
+    icon: Code,
+    run: (editor) => editor.chain().focus().toggleCode().run(),
+    isActive: (editor) => editor.isActive('code'),
+  },
+]
+
+const HEADING_ACTIONS: ToolbarAction[] = [
+  {
+    title: 'Heading 1',
+    icon: Heading1,
+    run: (editor) => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+    isActive: (editor) => editor.isActive('heading', { level: 1 }),
+  },
+  {
+    title: 'Heading 2',
+    icon: Heading2,
+    run: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+    isActive: (editor) => editor.isActive('heading', { level: 2 }),
+  },
+  {
+    title: 'Heading 3',
+    icon: Heading3,
+    run: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+    isActive: (editor) => editor.isActive('heading', { level: 3 }),
+  },
+]
+
+function ToolbarButton({ onClick, isActive, title, icon: Icon }: ToolbarButtonProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       title={title}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '28px',
-        height: '28px',
-        borderRadius: '5px',
-        border: 'none',
-        cursor: 'pointer',
-        background: isActive ? '#CCFBF1' : 'transparent',
-        color: isActive ? '#0F766E' : '#6B6560',
-        transition: 'background 0.1s, color 0.1s',
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-      }}
-      onMouseEnter={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.background = '#F5F3F0'
-          e.currentTarget.style.color = '#1C1917'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isActive) {
-          e.currentTarget.style.background = 'transparent'
-          e.currentTarget.style.color = '#6B6560'
-        }
-      }}
+      className={cn(
+        'flex h-7 w-7 items-center justify-center rounded-[5px] border-none bg-transparent font-sans transition-colors',
+        isActive
+          ? 'bg-[#CCFBF1] text-[#0F766E]'
+          : 'text-[#6B6560] hover:bg-[#F5F3F0] hover:text-[#1C1917]',
+      )}
     >
-      {children}
+      <Icon size={13} strokeWidth={2.5} />
     </button>
   )
 }
@@ -122,34 +160,15 @@ export default function Editor() {
                 boxShadow: '0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05)',
               }}
             >
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                isActive={editor.isActive('bold')}
-                title="Bold (⌘B)"
-              >
-                <Bold size={13} strokeWidth={2.5} />
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                isActive={editor.isActive('italic')}
-                title="Italic (⌘I)"
-              >
-                <Italic size={13} strokeWidth={2.5} />
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleStrike().run()}
-                isActive={editor.isActive('strike')}
-                title="Strikethrough"
-              >
-                <Strikethrough size={13} strokeWidth={2.5} />
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() => editor.chain().focus().toggleCode().run()}
-                isActive={editor.isActive('code')}
-                title="Inline Code"
-              >
-                <Code size={13} strokeWidth={2.5} />
-              </ToolbarButton>
+              {INLINE_ACTIONS.map((action) => (
+                <ToolbarButton
+                  key={action.title}
+                  onClick={() => action.run(editor)}
+                  isActive={action.isActive(editor)}
+                  title={action.title}
+                  icon={action.icon}
+                />
+              ))}
 
               {/* Separator */}
               <div
@@ -161,33 +180,15 @@ export default function Editor() {
                 }}
               />
 
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                isActive={editor.isActive('heading', { level: 1 })}
-                title="Heading 1"
-              >
-                <Heading1 size={13} strokeWidth={2.5} />
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                isActive={editor.isActive('heading', { level: 2 })}
-                title="Heading 2"
-              >
-                <Heading2 size={13} strokeWidth={2.5} />
-              </ToolbarButton>
-              <ToolbarButton
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                isActive={editor.isActive('heading', { level: 3 })}
-                title="Heading 3"
-              >
-                <Heading3 size={13} strokeWidth={2.5} />
-              </ToolbarButton>
+              {HEADING_ACTIONS.map((action) => (
+                <ToolbarButton
+                  key={action.title}
+                  onClick={() => action.run(editor)}
+                  isActive={action.isActive(editor)}
+                  title={action.title}
+                  icon={action.icon}
+                />
+              ))}
             </motion.div>
           </AnimatePresence>
         </BubbleMenu>

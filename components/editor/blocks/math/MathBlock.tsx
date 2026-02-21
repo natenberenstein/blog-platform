@@ -45,10 +45,7 @@ function RenderedFormula({
       {error ? (
         <span className="font-mono text-sm text-[#EF4444]">{error}</span>
       ) : (
-        <div
-          className="math-rendered overflow-x-auto"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <div className="math-rendered overflow-x-auto" dangerouslySetInnerHTML={{ __html: html }} />
       )}
       {/* Edit hint */}
       <span className="absolute right-3 top-2 text-[10px] text-[#C4BFBA] opacity-0 transition-opacity group-hover:opacity-100">
@@ -87,7 +84,9 @@ function FormulaEditor({
     el.style.height = `${el.scrollHeight}px`
   }, [])
 
-  useEffect(() => { autoGrow() }, [draft, autoGrow])
+  useEffect(() => {
+    autoGrow()
+  }, [draft, autoGrow])
 
   // Focus + native keydown listener.
   // Native listeners on the textarea (bubble phase) fire before ProseMirror's
@@ -101,9 +100,18 @@ function FormulaEditor({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       e.stopPropagation()
-      if (e.key === 'Escape') { e.preventDefault(); onCancel() }
-      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); onConfirm(draftRef.current) }
-      if (e.key === 'Tab') { e.preventDefault(); setDraft((d) => d + '  ') }
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        onCancel()
+      }
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        onConfirm(draftRef.current)
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault()
+        setDraft((d) => d + '  ')
+      }
     }
 
     el.addEventListener('keydown', handleKeyDown)
@@ -112,7 +120,6 @@ function FormulaEditor({
 
   return (
     <div className="my-1 overflow-hidden rounded-xl border border-[#0F766E] ring-2 ring-[#0F766E]/15">
-
       {/* Input area */}
       <div className="bg-[#F5F3F0] px-4 pt-3 pb-2">
         <p className="mb-1.5 font-sans text-[10px] font-semibold uppercase tracking-widest text-[#A09A94]">
@@ -121,7 +128,10 @@ function FormulaEditor({
         <textarea
           ref={textareaRef}
           value={draft}
-          onChange={(e) => { setDraft(e.target.value); autoGrow() }}
+          onChange={(e) => {
+            setDraft(e.target.value)
+            autoGrow()
+          }}
           placeholder="e.g. E = mc^2"
           rows={1}
           className="w-full resize-none bg-transparent font-mono text-sm leading-relaxed text-[#1C1917] placeholder-[#C4BFBA] outline-none"
@@ -145,26 +155,32 @@ function FormulaEditor({
       {/* Footer actions */}
       <div className="flex items-center justify-between border-t border-[#E5E0D8] bg-white px-4 py-2">
         <p className="font-sans text-[10px] text-[#A09A94]">
-          <kbd className="rounded bg-[#F0EDE8] px-1 py-0.5 font-mono text-[10px]">⌘↵</kbd> to confirm
-          &ensp;·&ensp;
-          <kbd className="rounded bg-[#F0EDE8] px-1 py-0.5 font-mono text-[10px]">Esc</kbd> to cancel
+          <kbd className="rounded bg-[#F0EDE8] px-1 py-0.5 font-mono text-[10px]">⌘↵</kbd> to
+          confirm &ensp;·&ensp;
+          <kbd className="rounded bg-[#F0EDE8] px-1 py-0.5 font-mono text-[10px]">Esc</kbd> to
+          cancel
         </p>
         <div className="flex items-center gap-2">
           <button
-            onMouseDown={(e) => { e.preventDefault(); onDelete() }}
+            onMouseDown={(e) => {
+              e.preventDefault()
+              onDelete()
+            }}
             className="flex items-center gap-1 rounded-md px-2 py-1 font-sans text-xs text-[#A09A94] transition-colors hover:bg-[#FEF2F2] hover:text-[#EF4444]"
           >
             <Trash2 size={11} /> Remove
           </button>
           <button
-            onMouseDown={(e) => { e.preventDefault(); onConfirm(draft) }}
+            onMouseDown={(e) => {
+              e.preventDefault()
+              onConfirm(draft)
+            }}
             className="flex items-center gap-1 rounded-md bg-[#0F766E] px-3 py-1 font-sans text-xs text-white transition-colors hover:bg-[#0D5F58]"
           >
             <Check size={11} /> Done
           </button>
         </div>
       </div>
-
     </div>
   )
 }
@@ -182,7 +198,10 @@ export default function MathBlock({ node, updateAttributes, selected, deleteNode
 
   function cancel() {
     // If no content was ever saved, remove the block entirely on cancel
-    if (saved === '') { deleteNode(); return }
+    if (saved === '') {
+      deleteNode()
+      return
+    }
     setIsEditing(false)
   }
 
@@ -197,11 +216,7 @@ export default function MathBlock({ node, updateAttributes, selected, deleteNode
             onDelete={deleteNode}
           />
         ) : (
-          <RenderedFormula
-            content={saved}
-            onEdit={() => setIsEditing(true)}
-            selected={selected}
-          />
+          <RenderedFormula content={saved} onEdit={() => setIsEditing(true)} selected={selected} />
         )}
       </div>
     </NodeViewWrapper>
