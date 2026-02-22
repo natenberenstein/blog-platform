@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react'
-import type { NodeViewProps } from '@tiptap/react'
 import { Trash2 } from 'lucide-react'
 
 // ─── Types & constants ────────────────────────────────────────────────────────
@@ -21,36 +19,28 @@ const VARIANT_STYLES: Record<
 }
 
 const EMOJI_OPTIONS = [
-  '💡',
-  '✅',
-  '⚠️',
-  '❌',
-  '📌',
-  '🔥',
-  '💬',
-  '📝',
-  '🎯',
-  'ℹ️',
-  '🚀',
-  '💭',
-  '🌟',
-  '🔑',
-  '📊',
-  '🧠',
-  '👉',
-  '✨',
+  '💡', '✅', '⚠️', '❌', '📌', '🔥', '💬', '📝', '🎯',
+  'ℹ️', '🚀', '💭', '🌟', '🔑', '📊', '🧠', '👉', '✨',
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+interface CalloutBlockProps {
+  emoji: string
+  variant: string
+  contentRef: (el: HTMLElement | null) => void
+  updateAttributes: (attrs: Record<string, string>) => void
+  deleteNode: () => void
+}
+
 export default function CalloutBlock({
-  node,
+  emoji,
+  variant,
+  contentRef,
   updateAttributes,
-  selected,
   deleteNode,
-}: NodeViewProps) {
-  const { emoji, variant } = node.attrs as { emoji: string; variant: CalloutVariant }
-  const styles = VARIANT_STYLES[variant] ?? VARIANT_STYLES.info
+}: CalloutBlockProps) {
+  const styles = VARIANT_STYLES[(variant as CalloutVariant) ?? 'info'] ?? VARIANT_STYLES.info
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -71,7 +61,7 @@ export default function CalloutBlock({
   const showControls = isHovered || showEmojiPicker
 
   return (
-    <NodeViewWrapper
+    <div
       className="my-3 font-sans"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -117,9 +107,7 @@ export default function CalloutBlock({
 
       {/* Callout box */}
       <div
-        className={`flex gap-3 rounded-xl border px-4 py-3 transition-all ${styles.bg} ${styles.border} ${
-          selected ? 'ring-2 ring-[#0F766E]/20' : ''
-        }`}
+        className={`flex gap-3 rounded-xl border px-4 py-3 transition-all ${styles.bg} ${styles.border}`}
       >
         {/* Emoji — click to open picker */}
         <div contentEditable={false} className="relative shrink-0 mt-0.5" ref={emojiRef}>
@@ -155,8 +143,11 @@ export default function CalloutBlock({
         </div>
 
         {/* Editable rich-text content */}
-        <NodeViewContent className="flex-1 min-w-0 text-sm leading-relaxed text-[#1C1917] [&>p]:my-0 [&>p+p]:mt-2" />
+        <div
+          className="flex-1 min-w-0 text-sm leading-relaxed text-[#1C1917] [&>p]:my-0 [&>p+p]:mt-2"
+          ref={contentRef}
+        />
       </div>
-    </NodeViewWrapper>
+    </div>
   )
 }

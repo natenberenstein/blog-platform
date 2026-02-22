@@ -68,7 +68,7 @@ export default function Page() {
           }}
         />
 
-        {/* Tiptap Editor */}
+        {/* BlockNote Editor */}
         <Editor />
       </div>
     </main>

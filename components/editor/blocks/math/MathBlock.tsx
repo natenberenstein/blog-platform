@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { NodeViewWrapper } from '@tiptap/react'
-import type { NodeViewProps } from '@tiptap/react'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Trash2, Check } from 'lucide-react'
@@ -25,22 +23,16 @@ function renderLatex(src: string): { html: string; error: string | null } {
 function RenderedFormula({
   content,
   onEdit,
-  selected,
 }: {
   content: string
   onEdit: () => void
-  selected: boolean
 }) {
   const { html, error } = renderLatex(content)
 
   return (
     <div
       onClick={onEdit}
-      className={`group relative my-1 flex min-h-[3rem] cursor-pointer items-center justify-center rounded-xl border px-6 py-5 transition-all ${
-        selected
-          ? 'border-[#0F766E] ring-2 ring-[#0F766E]/15'
-          : 'border-[#E5E0D8] hover:border-[#0F766E]/40'
-      }`}
+      className="group relative my-1 flex min-h-[3rem] cursor-pointer items-center justify-center rounded-xl border px-6 py-5 transition-all border-[#E5E0D8] hover:border-[#0F766E]/40"
     >
       {error ? (
         <span className="font-mono text-sm text-[#EF4444]">{error}</span>
@@ -89,9 +81,6 @@ function FormulaEditor({
   }, [draft, autoGrow])
 
   // Focus + native keydown listener.
-  // Native listeners on the textarea (bubble phase) fire before ProseMirror's
-  // listener on the editor div, so stopPropagation() actually works here.
-  // React's synthetic onKeyDown would only fire at the root container — too late.
   useEffect(() => {
     const el = textareaRef.current
     if (!el) return
@@ -187,8 +176,14 @@ function FormulaEditor({
 
 // ─── Main block ───────────────────────────────────────────────────────────────
 
-export default function MathBlock({ node, updateAttributes, selected, deleteNode }: NodeViewProps) {
-  const saved = (node.attrs.content as string) ?? ''
+interface MathBlockProps {
+  content: string
+  updateAttributes: (attrs: Record<string, string>) => void
+  deleteNode: () => void
+}
+
+export default function MathBlock({ content, updateAttributes, deleteNode }: MathBlockProps) {
+  const saved = content ?? ''
   const [isEditing, setIsEditing] = useState(saved === '')
 
   function confirm(value: string) {
@@ -197,7 +192,6 @@ export default function MathBlock({ node, updateAttributes, selected, deleteNode
   }
 
   function cancel() {
-    // If no content was ever saved, remove the block entirely on cancel
     if (saved === '') {
       deleteNode()
       return
@@ -206,19 +200,17 @@ export default function MathBlock({ node, updateAttributes, selected, deleteNode
   }
 
   return (
-    <NodeViewWrapper>
-      <div contentEditable={false} onKeyDown={(e) => e.stopPropagation()}>
-        {isEditing ? (
-          <FormulaEditor
-            initialValue={saved}
-            onConfirm={confirm}
-            onCancel={cancel}
-            onDelete={deleteNode}
-          />
-        ) : (
-          <RenderedFormula content={saved} onEdit={() => setIsEditing(true)} selected={selected} />
-        )}
-      </div>
-    </NodeViewWrapper>
+    <div contentEditable={false} onKeyDown={(e) => e.stopPropagation()}>
+      {isEditing ? (
+        <FormulaEditor
+          initialValue={saved}
+          onConfirm={confirm}
+          onCancel={cancel}
+          onDelete={deleteNode}
+        />
+      ) : (
+        <RenderedFormula content={saved} onEdit={() => setIsEditing(true)} />
+      )}
+    </div>
   )
 }
